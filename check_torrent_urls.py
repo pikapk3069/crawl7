@@ -18,9 +18,9 @@ INPUT_FILE = "torrent_error.txt"
 OK_FILE = "torrent_check_ok.txt"
 ERROR_FILE = "torrent_check_error.txt"
 TIMEOUT = 5
-MAX_CONCURRENT = 10
-COMMIT_INTERVAL = 100
-WRITE_BATCH_SIZE = 100  # 每 100 个 URL 写入一次文件
+MAX_CONCURRENT = 20  # 适中并发
+COMMIT_INTERVAL = 1000  # 每 1000 个 URL 提交
+WRITE_BATCH_SIZE = 1000  # 每 1000 个 URL 写入
 
 # 请求头
 HEADERS = {
