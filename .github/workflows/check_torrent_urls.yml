@@ -1,0 +1,53 @@
+name: Check Torrent URLs
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_file:
+        description: 'Input file containing torrent URLs (e.g., torrent_error.txt)'
+        required: true
+        default: 'torrent_error.txt'
+
+permissions:
+  contents: write  # Grant write permissions for committing files
+
+jobs:
+  check_urls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: pirates/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install aiohttp
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "pikapk3069"
+          git config --global user.email "pikapk3069@outlook.com"
+
+      - name: Run URL checker
+        env:
+          INPUT_FILE: ${{ github.event.inputs.input_file }}
+        run: |
+          python check_torrent_urls.py
+
+      - name: Commit and push changes
+        if: always()  # Attempt to commit regardless of script success
+        run: |
+          git add torrent_check_ok.txt torrent_check_error.txt check_torrent_urls.log
+          git commit -m "Update torrent URL check results" || echo "No changes to commit"
+          git push || echo "Push failed, possibly no changes or permission issue"
